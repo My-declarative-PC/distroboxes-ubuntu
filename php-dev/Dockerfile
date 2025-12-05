@@ -1,14 +1,14 @@
 FROM ghcr.io/my-declarative-pc/distroboxes-ubuntu-base
 
-RUN nala update && \
-    nala install --no-install-recommends -y software-properties-common
-
 ARG PHP_VERSION="8.3"
-
-RUN add-apt-repository ppa:ondrej/php && \
+RUN nala update && \
+    nala install --no-install-recommends -y software-properties-common && \
+    add-apt-repository ppa:ondrej/php && \
     nala update && \
-    \
     nala install --no-install-recommends -y \
+        curl \
+        nodejs \
+        npm \
         php${PHP_VERSION} \
         php${PHP_VERSION}-apcu \
         php${PHP_VERSION}-cli \
@@ -24,20 +24,21 @@ RUN add-apt-repository ppa:ondrej/php && \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-zip \
     && \
-    nala clean && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /tmp/* /var/tmp/*
 
 ### Configure PHP
 COPY ./configs/php/Z0-main.ini /etc/php/${PHP_VERSION}/cli/conf.d/
-
 COPY ./configs/php/ZZ-apcu.ini /etc/php/${PHP_VERSION}/cli/conf.d/
-
 COPY ./configs/php/ZZ-opcache.ini /etc/php/${PHP_VERSION}/cli/conf.d/
-
 COPY ./configs/php/ZZ-xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/
 ###
 
 ### install "Composer"
 RUN curl -sS https://getcomposer.org/installer | php${PHP_VERSION} -- --install-dir=/usr/local/bin --filename=composer
+###
+
+### install LSP's
+RUN npm -g i intelephense
 ###
