@@ -3,7 +3,9 @@ FROM ghcr.io/my-declarative-pc/distroboxes-ubuntu-base
 USER root
 
 RUN nala update && \
-    nala install --no-install-recommends -y apt-transport-https curl
+    nala install --no-install-recommends -y apt-transport-https curl && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /etc/apt/keyrings && \
     curl -sSfL https://packages.openvpn.net/packages-repo.gpg >/etc/apt/keyrings/openvpn.asc && \
@@ -11,6 +13,6 @@ RUN mkdir -p /etc/apt/keyrings && \
 
 RUN nala update && \
     nala install -y openvpn3-client && \
-    nala clean && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
