@@ -40,5 +40,12 @@ RUN curl -sS https://getcomposer.org/installer | php${PHP_VERSION} -- --install-
 ###
 
 ### install LSP's
-RUN npm -g i intelephense
+RUN npm -g i intelephense \
+    @biomejs/biome \
+    @fsouza/prettierd \
+    prettier \
+    typescript \
+    typescript-language-server \
+    vscode-langservers-extracted && \
+    npm cache clean --force
 ###
