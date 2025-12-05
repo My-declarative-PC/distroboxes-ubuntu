@@ -1,0 +1,76 @@
+name: Build and Publish Distrobox Images
+
+on:
+  # Запуск при пуше в ветку main
+  push:
+    branches:
+      - main
+  # Также позволяет запускать вручную из интерфейса GitHub
+  workflow_dispatch:
+  # Пересборка раз в месяц
+  schedule:
+    - cron: "0 0 1 * *"
+
+# Установка разрешений для токена GITHUB_TOKEN
+permissions:
+  contents: read
+  packages: write # Необходимо для публикации в GHCR
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    # Стратегия матрицы для итерации по каждому каталогу с Dockerfile
+    strategy:
+      fail-fast: false
+      matrix:
+        # Список каталогов, содержащих Dockerfile
+        # image: [base, openvpn, php-dev]
+        image: [base]
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      # --- Настройка Docker и GHCR ---
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔑 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          # Используем встроенный GITHUB_TOKEN
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- Получение метаданных для тегов ---
+      - name: 🏷️ Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # Имя образа в GHCR будет: ghcr.io/<owner>/<repo>-<image_name>
+          images: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-${{ matrix.image }}
+          # Правила для тегов
+          tags: |
+            type=sha,format=long # SHA коммита
+            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }} # "latest" для ветки main
+            type=ref,event=branch # Имя ветки
+
+      # --- Сборка и публикация ---
+      - name: 🏗️ Build and Push ${{ matrix.image }} Image
+        uses: docker/build-push-action@v6
+        with:
+          # Контекст сборки - подкаталог (e.g., ./base)
+          context: ./${{ matrix.image }}
+          # Путь к Dockerfile внутри подкаталога (./base/Dockerfile)
+          file: ./${{ matrix.image }}/Dockerfile
+          # Включаем публикацию
+          push: true
+          # Теги из шага метаданных
+          tags: ${{ steps.meta.outputs.tags }}
+          # Метки из шага метаданных
+          labels: ${{ steps.meta.outputs.labels }}
+          # Включение кэша для более быстрой сборки
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
