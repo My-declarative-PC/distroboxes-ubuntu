@@ -4,7 +4,10 @@ USER root
 
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y nala && \
+    apt install -y \
+        nala \
+        xsel \
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
