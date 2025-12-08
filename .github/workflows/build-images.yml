@@ -66,6 +66,7 @@ jobs:
           file: ./${{ matrix.image }}/Dockerfile
           # Включаем публикацию
           push: true
+          pull: true
           # Теги из шага метаданных
           tags: ${{ steps.meta.outputs.tags }}
           # Метки из шага метаданных
