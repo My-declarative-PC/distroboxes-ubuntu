@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         # Список каталогов, содержащих Dockerfile
-        image: [base, openvpn, php-dev]
+        image: [base, openvpn, php, python]
 
     steps:
       - name: ⬇️ Checkout code
