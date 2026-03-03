@@ -14,7 +14,8 @@ RUN apt update && \
         xsel \
     && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/* /var/tmp/*
 
 RUN ln -s /run/host/home/linuxbrew /home/linuxbrew && \
     curl -fL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /usr/bin/brew-install.sh && \

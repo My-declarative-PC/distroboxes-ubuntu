@@ -2,10 +2,11 @@ FROM ghcr.io/my-declarative-pc/distroboxes-ubuntu-base
 
 RUN nala update && \
     nala install --no-install-recommends -y \
-    python3 \
     curl \
     nodejs \
     npm \
+    python3 \
+    python3-pip \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
