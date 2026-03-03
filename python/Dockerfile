@@ -5,6 +5,7 @@ RUN nala update && \
     curl \
     nodejs \
     npm \
+    pipx \
     python3 \
     python3-pip \
     && \
