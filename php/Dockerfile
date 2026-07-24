@@ -43,9 +43,9 @@ RUN curl -sS https://getcomposer.org/installer | php${PHP_VERSION} -- --install-
 RUN npm -g i intelephense \
     @biomejs/biome \
     @fsouza/prettierd \
+    opencode-ai \
     prettier \
     typescript \
-    opencode-ai \
     typescript-language-server \
     vscode-langservers-extracted && \
     npm cache clean --force
