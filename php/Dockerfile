@@ -45,6 +45,7 @@ RUN npm -g i intelephense \
     @fsouza/prettierd \
     prettier \
     typescript \
+    opencode-ai \
     typescript-language-server \
     vscode-langservers-extracted && \
     npm cache clean --force
